@@ -1,0 +1,1083 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
+using Helper;
+using MySql.Data.MySqlClient;
+using System.Data;
+using System.Threading;
+using EmailPattern;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+
+namespace EmailPattern
+{
+    class Program
+    {
+        //static int i, j = 0;
+        static int i = 0;
+       
+        // public static string ConnectionString = "";
+
+        static bool flag = false;
+        public static string randomstring = "62490172@";
+        static Stopwatch sw = new Stopwatch();
+        public static int ires = 0;
+        public static string str_tbl = "";
+        public static int i_reccheck = 0;
+        public static int i_type = 0;
+
+        static List<string> lst_IAccepAll_Rows = new List<string>();
+        static List<string> lst_UPAccepAll_Rows = new List<string>();
+        static List<string> lst_UPException_Rows = new List<string>();
+
+        static List<string> lst_chkstatus_Rows = new List<string>();
+        static void Main(string[] args)
+        {
+            Console.WriteLine("start");
+            DataTable dt_rec = new DataTable();
+            i_type = 1;
+            str_tbl = "";
+            try
+            {
+                GetConnection();
+                //EmailPatternCls.DomainCorrection(6, 0); //Domain Correction
+                
+                   while (flag == false)
+                    {
+                        for (i = 0; i < 250; i++)
+                        {
+                            if (flag == true)
+                            {
+                                break;
+                            }
+                            i_type = 1;
+                            GetRec_thread(i, i_type);
+                        }
+
+                        if ((i == 250) && (flag == false))
+                        {
+                            while (flag == false)
+                            {
+                                i_type = 4;
+                                i_reccheck = 1;
+                                GetRec_thread(i, i_type);
+                            }
+
+                            flag = false;
+                            while (flag == false)
+                            {
+                                i_type = 5;
+                                i_reccheck = 2;
+                                GetRec_thread(i, i_type);
+                            }
+
+                            i = 0;
+                            flag = false;
+                            i_reccheck = 0;
+                        }
+                    }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                Console.ReadLine();
+            }
+            Console.WriteLine("End");
+            Console.ReadLine();
+        }
+        public static void GetRec_thread(int i, int i_type)
+         {
+            try
+             {
+                Console.WriteLine("GetRec ST:{0}", System.DateTime.Now);
+                DataTable dt_total = GetRec(i_type, i);
+                Console.WriteLine("GetRec ET:{0}", System.DateTime.Now + "Total rec -"+ dt_total.Rows.Count.ToString());
+                int irec = 10;
+                if (dt_total.Rows.Count > 0)
+                {
+                    Console.WriteLine("Total time taken to complete threads ST: {0}", System.DateTime.Now);
+
+                    Thread T1 = new Thread((() =>
+                        {
+                            if (dt_total.Rows.Count > (irec * 0))
+                            {
+                              chkmail("T1", dt_total.AsEnumerable().Skip((irec * 0)).Take(irec).CopyToDataTable());
+                            }
+                        })
+                      );
+
+                    Thread T2 = new Thread((() =>
+                     {
+                         if (dt_total.Rows.Count > (irec * 1))
+                         {
+                             chkmail("T2", dt_total.AsEnumerable().Skip((irec * 1)).Take(irec).CopyToDataTable());
+                         }
+                     })
+                 );
+
+                    Thread T3 = new Thread((() =>
+                          {
+                              if (dt_total.Rows.Count > (irec * 2))
+                              {
+                                  chkmail("T3", dt_total.AsEnumerable().Skip((irec * 2)).Take(irec).CopyToDataTable());
+                              }
+                          })
+                      );
+
+                    Thread T4 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 3))
+                        {
+                            chkmail("T4", dt_total.AsEnumerable().Skip((irec * 3)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+
+                    Thread T5 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 4))
+                        {
+                            chkmail("T5", dt_total.AsEnumerable().Skip((irec * 4)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+
+                    Thread T6 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 5))
+                        {
+                            chkmail("T6", dt_total.AsEnumerable().Skip((irec * 5)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+
+                    Thread T7 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 6))
+                        {
+                            chkmail("T7", dt_total.AsEnumerable().Skip((irec * 6)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+
+                    Thread T8 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 7))
+                        {
+                            chkmail("T8", dt_total.AsEnumerable().Skip((irec * 7)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+
+                    Thread T9 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 8))
+                        {
+                            chkmail("T9", dt_total.AsEnumerable().Skip((irec * 8)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                  );
+
+                    Thread T10 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 9))
+                        {
+                            chkmail("T10", dt_total.AsEnumerable().Skip((irec * 9)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+                    Thread T11 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 10))
+                        {
+                            chkmail("T11", dt_total.AsEnumerable().Skip((irec * 10)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+                    Thread T12 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 11))
+                        {
+                            chkmail("T12", dt_total.AsEnumerable().Skip((irec * 11)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+                    Thread T13 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 12))
+                        {
+                            chkmail("T13", dt_total.AsEnumerable().Skip((irec * 12)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+                    Thread T14 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 13))
+                        {
+                            chkmail("T14", dt_total.AsEnumerable().Skip((irec * 13)).Take(irec).CopyToDataTable());
+                        }
+                    })
+               );
+                    Thread T15 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 14))
+                        {
+                            chkmail("T15", dt_total.AsEnumerable().Skip((irec * 14)).Take(irec).CopyToDataTable());
+                        }
+                    })
+              );
+                    Thread T16 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 15))
+                        {
+                            chkmail("T16", dt_total.AsEnumerable().Skip((irec * 15)).Take(irec).CopyToDataTable());
+                        }
+                    })
+              );
+                    Thread T17 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 16))
+                        {
+                            chkmail("T17", dt_total.AsEnumerable().Skip((irec * 16)).Take(irec).CopyToDataTable());
+                        }
+                    })
+               );
+                    Thread T18 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 17))
+                        {
+                            chkmail("T18", dt_total.AsEnumerable().Skip((irec * 17)).Take(irec).CopyToDataTable());
+                        }
+                    })
+               );
+                    Thread T19 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 18))
+                        {
+                            chkmail("T19", dt_total.AsEnumerable().Skip((irec * 18)).Take(irec).CopyToDataTable());
+                        }
+                    })
+               );
+                    Thread T20 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 19))
+                        {
+                            chkmail("T20", dt_total.AsEnumerable().Skip((irec * 19)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+                  Thread T21 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 20))
+                        {
+                            chkmail("T21", dt_total.AsEnumerable().Skip((irec * 20)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+                 Thread T22 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 21))
+                        {
+                            chkmail("T22", dt_total.AsEnumerable().Skip((irec * 21)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                  );
+                    Thread T23 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 22))
+                        {
+                            chkmail("T23", dt_total.AsEnumerable().Skip((irec * 22)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+                   Thread T24 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 23))
+                        {
+                            chkmail("T24", dt_total.AsEnumerable().Skip((irec * 23)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+                    Thread T25 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 24))
+                        {
+                            chkmail("T25", dt_total.AsEnumerable().Skip((irec * 24)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+                    Thread T26 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 25))
+                        {
+                            chkmail("T26", dt_total.AsEnumerable().Skip((irec * 25)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+                    Thread T27 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 26))
+                        {
+                            chkmail("T27", dt_total.AsEnumerable().Skip((irec * 26)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+                 Thread T28 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 27))
+                        {
+                            chkmail("T28", dt_total.AsEnumerable().Skip((irec * 27)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                );
+                 Thread T29 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 28))
+                        {
+                            chkmail("T29", dt_total.AsEnumerable().Skip((irec * 28)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                 );
+                 Thread T30 = new Thread((() =>
+                    {
+                        if (dt_total.Rows.Count > (irec * 29))
+                        {
+                            chkmail("T30", dt_total.AsEnumerable().Skip((irec * 29)).Take(irec).CopyToDataTable());
+                        }
+                    })
+                  );
+                   
+                    Thread T31 = new Thread(() => SaveDomainCheckAll());
+
+                    T1.Start();
+                    T2.Start();
+                    T3.Start();
+                    T4.Start();
+                    T5.Start();
+                    T6.Start();
+                    T7.Start();
+                    T8.Start();
+                    T9.Start();
+                    T10.Start();
+
+                    T11.Start();
+                    T12.Start();
+                    T13.Start();
+                    T14.Start();
+                    T15.Start();
+                    T16.Start();
+                    T17.Start();
+                    T18.Start();
+                    T19.Start();
+                    T20.Start();
+
+                    T21.Start();
+                    T22.Start();
+                    T23.Start();
+                    T24.Start();
+                    T25.Start();
+                    T26.Start();
+                    T27.Start();
+                    T28.Start();
+                    T29.Start();
+                    T30.Start();
+
+
+                    if (!T1.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T1 time exceeds."); T1.Abort(); }
+                    if (!T2.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T2 time exceeds."); T2.Abort(); }
+                    if (!T3.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T3 time exceeds."); T3.Abort(); }
+                    if (!T4.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T4 time exceeds."); T4.Abort(); }
+                    if (!T5.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T5 time exceeds."); T5.Abort(); }
+                    if (!T6.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T6 time exceeds."); T6.Abort(); }
+                    if (!T7.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T7 time exceeds."); T7.Abort(); }
+                    if (!T8.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T8 time exceeds."); T8.Abort(); }
+                    if (!T9.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T9 time exceeds."); T9.Abort(); }
+                    if (!T10.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T10 time exceeds."); T10.Abort(); }
+
+                    if (!T11.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T11 time exceeds."); T11.Abort(); }
+                    if (!T12.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T12 time exceeds."); T12.Abort(); }
+                    if (!T13.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T13 time exceeds."); T13.Abort(); }
+                    if (!T14.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T14 time exceeds."); T14.Abort(); }
+                    if (!T15.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T15 time exceeds."); T15.Abort(); }
+                    if (!T16.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T16 time exceeds."); T16.Abort(); }
+                    if (!T17.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T17 time exceeds."); T17.Abort(); }
+                    if (!T18.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T18 time exceeds."); T18.Abort(); }
+                    if (!T19.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T19 time exceeds."); T19.Abort(); }
+                    if (!T20.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T20 time exceeds."); T20.Abort(); }
+
+                    if (!T21.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T21 time exceeds."); T21.Abort(); }
+                    if (!T22.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T22 time exceeds."); T22.Abort(); }
+                    if (!T23.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T23 time exceeds."); T23.Abort(); }
+                    if (!T24.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T24 time exceeds."); T24.Abort(); }
+                    if (!T25.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T25 time exceeds."); T25.Abort(); }
+                    if (!T26.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T26 time exceeds."); T26.Abort(); }
+                    if (!T27.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T27 time exceeds."); T27.Abort(); }
+                    if (!T28.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T28 time exceeds."); T28.Abort(); }
+                    if (!T29.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T29 time exceeds."); T29.Abort(); }
+                    if (!T30.Join(TimeSpan.FromMinutes(5))) { Console.WriteLine("T30 time exceeds."); T30.Abort(); }
+
+                    T31.Start();
+                    T31.Join();
+
+                    GC.Collect();
+                    Console.WriteLine((i + 1) * 300 + " Records Completed.");
+                    Console.WriteLine("Total time taken to complete threads ET: {0}", System.DateTime.Now);
+                }
+                else
+                {
+                  flag = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        protected static void chkmail(string sthread, DataTable dt)
+       {
+           if (i_reccheck == 1 || i_reccheck == 2)
+            {
+               chkmail_Recheck(ref sthread, ref dt);
+            }
+            else if (i_reccheck == 0)
+            {
+                Console.WriteLine("Chkmail ST :{0} {1}", sthread, System.DateTime.Now);
+                //Thread.Sleep(100);
+                StringBuilder sCommand = new StringBuilder("INSERT INTO email_pattern_is_exists_nonavailable_pattern (U_id,Email_Id,Pattern_Exists,550_Status,553_Status,3_exception_Status,450_Status,Other_Status,Email_Pattern_Exception) VALUES ");
+                List<string> Rows = new List<string>();
+
+                string Email_Pattern_EmailId_Uid = "";
+                string strmail = "";
+                string pattern_exists = "";
+                string str_fname, str_lname = "";
+                string str_Pdoamin = "";
+                string str_doamin = "";
+                string str_distinc_doamin = "";
+                int i_Ppattern = 0;
+                int int_chkcatch_domain = 0;
+                int i_553_AccountExist = 0;
+                int i_3_AccountExist = 0;
+                int i_450_AccountExist = 0;
+                int i_AccountExist = 0;
+                string str_other = "";
+                string[] arr_res = new string[2];
+                string str_res = "";
+                StringBuilder sb_exceptionEmailId = new StringBuilder();
+
+                if (dt.Rows.Count > 0)
+                {
+                    try
+                    {
+                       foreach (DataRow dr in dt.Rows)
+                        {
+                            int i = 1;
+                            int res = 0;
+                            i_AccountExist = 0;
+                            i_553_AccountExist = 0;
+                            i_3_AccountExist = 0;
+                            i_450_AccountExist = 0;
+                            Email_Pattern_EmailId_Uid = dr["U_id"].ToString();
+                            str_other = "";
+                            str_doamin = dr["website"].ToString();
+                            str_fname = Regex.Replace(dr["First_Name"].ToString(), "[^a-zA-Z]", String.Empty);
+                            str_lname = Regex.Replace(dr["Last_Name"].ToString(), "[^a-zA-Z]", String.Empty);
+                            sb_exceptionEmailId.Clear();
+
+                            if (str_fname != string.Empty)
+                            {
+                                if (i_reccheck == 0)
+                                {
+                                    if ((str_distinc_doamin != str_doamin) || (int_chkcatch_domain == 3)) // check catch all
+                                    //if(str_distinc_doamin != str_doamin)
+                                    {
+                                        int_chkcatch_domain = 0;
+                                        int_chkcatch_domain = CheckDomainError(str_distinc_doamin, str_doamin);
+                                        if (int_chkcatch_domain == 3)
+                                        {
+                                            int_chkcatch_domain = CheckDomainError(str_distinc_doamin, str_doamin);
+                                        }
+                                        str_distinc_doamin = str_doamin;
+                                    }
+                                }
+                                if ((int_chkcatch_domain != 3) && (int_chkcatch_domain != 1)) //
+                                {
+                                    // if (int_chkcatch_domain == 0)
+                                    //if (int_chkcatch_domain != 1)
+                                    // {
+                                    if (str_Pdoamin != "" && str_Pdoamin == str_doamin) // check domain priority
+                                    {
+                                        try
+                                        {
+                                            strmail = EmailPatternCls.CreatePattern(str_fname, str_lname, str_doamin, i_Ppattern);
+                                            //str_res = Chkmail(strmail);
+                                            //Console.WriteLine(strmail);
+                                            str_res = EmailPatternCls.Chkmail(strmail);
+                                            //Console.WriteLine(str_res);
+                                            arr_res = str_res.Split(';');
+                                            res = Convert.ToInt32(arr_res[0]);
+
+                                            if (res == 550) //account that you tried to reach does not exist
+                                            {
+                                                i_AccountExist += 1;
+                                            }
+                                            else if (res == 553) // recipient address is not a valid
+                                            {
+                                                i_553_AccountExist += 1;
+                                            }
+                                            else if (res == 3) // Exception
+                                            {
+                                                i_3_AccountExist += 1;
+                                                sb_exceptionEmailId.Append(strmail);
+                                            }
+                                            else if (res == 0) //mail at a rate that
+                                            {
+                                                i_450_AccountExist += 1;
+                                                sb_exceptionEmailId.Append(strmail);
+                                            }
+                                            else if (res == 1) //OK
+                                            {
+                                                pattern_exists = res == 1 ? "P" + i_Ppattern.ToString() : "";
+                                            }
+                                            else
+                                            {
+                                                str_other = arr_res[1];
+                                                sb_exceptionEmailId.Append(strmail + ";");
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            //Console.WriteLine(ex.ToString());
+                                        }
+                                    }
+
+                                   while (res != 1 && i < 19)
+                                    //while (i < 2)
+                                    {
+                                        try
+                                        {
+                                            if (i != i_Ppattern)
+                                            {
+                                                strmail = EmailPatternCls.CreatePattern(str_fname, str_lname, str_doamin, i);
+                                                if (strmail != "")
+                                                {
+                                                    //res = EmailPatternCls.Chkmail(strmail);
+                                                    str_res = EmailPatternCls.Chkmail(strmail);
+                                                    //Console.WriteLine(str_res);
+                                                    arr_res = str_res.Split(';');
+                                                    res = Convert.ToInt32(arr_res[0]);
+                                                    if (res == 550) 
+                                                    {
+                                                        i_AccountExist += 1;
+                                                    }
+                                                    else if (res == 553)
+                                                    {
+                                                        i_553_AccountExist += 1;
+                                                    }
+                                                    else if (res == 3)
+                                                    {
+                                                        i_3_AccountExist += 1;
+                                                        sb_exceptionEmailId.Append(strmail + ";");
+                                                    }
+                                                    else if (res == 0) //mail at a rate that
+                                                    {
+                                                        i_450_AccountExist += 1;
+                                                        sb_exceptionEmailId.Append(strmail + ";");
+                                                    }
+                                                    else if (res == 1)
+                                                    {
+                                                        pattern_exists = "P" + i.ToString();
+                                                        str_Pdoamin = str_doamin;
+                                                        i_Ppattern = i;
+                                                    }
+                                                    else
+                                                    {
+                                                       str_other = arr_res[1];
+                                                       sb_exceptionEmailId.Append(strmail + ";");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(strmail + " " + ex.ToString());
+                                            //Rows.Add(string.Format("('{0}','{1}','{2}','{3}')", MySqlHelper.EscapeString(Email_Pattern_EmailId_Uid), MySqlHelper.EscapeString(strmail), MySqlHelper.EscapeString(ex.ToString()), MySqlHelper.EscapeString(pattern_exists)));
+                                        }
+                                        i++;
+                                        strmail = res == 1 ? strmail : "";
+                                    }
+                                    Rows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')",
+                                        MySqlHelper.EscapeString(Email_Pattern_EmailId_Uid),
+                                        MySqlHelper.EscapeString(strmail),
+                                        MySqlHelper.EscapeString(pattern_exists.ToString()),
+                                        MySqlHelper.EscapeString(i_AccountExist.ToString()),
+                                        MySqlHelper.EscapeString(i_553_AccountExist.ToString()),
+                                        MySqlHelper.EscapeString(i_3_AccountExist.ToString()),
+                                        MySqlHelper.EscapeString(i_450_AccountExist.ToString()),
+                                        MySqlHelper.EscapeString(str_other),
+                                        MySqlHelper.EscapeString(sb_exceptionEmailId.ToString())));
+                                    pattern_exists = "";
+                                    strmail = "";
+                                }
+                            }
+                        }
+                        if (Rows.Count > 0)
+                        {
+                            sCommand.Append(string.Join(",", Rows));
+                            sCommand.Append(";");
+                            HelperCls.ExecuteSaveQuery(sCommand.ToString());
+                            Rows.Clear();
+                        }
+                        dt.Clear();
+                    }
+
+                    catch (Exception ex)
+                    {
+                        //Console.WriteLine(ex.ToString());
+                    }
+                    Console.WriteLine("Chkmail ET : {0} {1}", sthread, System.DateTime.Now);
+                }
+            }
+        }
+        protected static void chkmail_Recheck(ref string sthread, ref DataTable dt)
+        {
+            string str_tbl = "";
+            str_tbl = i_reccheck == 1 ? "email_pattern_recheck" : "email_pattern_recheck_1";
+            Console.WriteLine("Chkmail ST :{0} {1}", sthread, System.DateTime.Now);
+            //Thread.Sleep(100);
+            StringBuilder sCommand = new StringBuilder("INSERT INTO " + str_tbl + " (U_id,Email_Id,Pattern_Exists,550_Status,553_Status,3_exception_Status,450_Status,Other_Status,Email_Pattern_Exception) VALUES ");
+            List<string> Rows = new List<string>();
+
+            string Email_Pattern_EmailId_Uid = "";
+            string strmail = "";
+            // string str_fname, str_lname = "";
+            int i_Ppattern = 0;
+            // int int_chkcatch_domain = 0;
+            int i_553_AccountExist = 0;
+            int i_3_AccountExist = 0;
+            int i_450_AccountExist = 0;
+            int i_AccountExist = 0;
+            string str_other = "";
+            string[] arr_res = new string[2];
+            string str_res = "";
+            StringBuilder sb_exceptionEmailId = new StringBuilder();
+            List<string> lstEmail = new List<string>();
+            string str_Pdoamin = "";
+            string str_doamin = "";
+            string pattern_exists = "";
+
+            if (dt.Rows.Count > 0)
+             {
+                try
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        int i = 1;
+                        int res = 0;
+                        i_AccountExist = 0;
+                        i_553_AccountExist = 0;
+                        i_3_AccountExist = 0;
+                        i_450_AccountExist = 0;
+                        Email_Pattern_EmailId_Uid = dr["U_id"].ToString();
+                        str_other = "";
+                        str_doamin = dr["Email_Pattern_Exception"].ToString();
+                        //str_fname = Regex.Replace(dr["First_Name"].ToString(), "[^a-zA-Z]", String.Empty);
+                        //str_lname = Regex.Replace(dr["Last_Name"].ToString(), "[^a-zA-Z]", String.Empty);
+                        sb_exceptionEmailId.Clear();
+                        lstEmail = str_doamin.Split(';').ToList();
+
+                        try
+                        {
+                            for (int ic = 0; ic < (lstEmail.Count() - 1); ic++)
+                            {
+                                if (res == 1)
+                                { break; }
+                                else
+                                {
+                                    if (lstEmail[ic].ToString() != "")
+                                    {
+                                        //str_res = Chkmail(lstEmail[ic]);
+                                        str_res = EmailPatternCls.Chkmail(lstEmail[ic]);
+                                        arr_res = str_res.Split(';');
+                                        res = Convert.ToInt32(arr_res[0]);
+                                        if (res == 550)
+                                        {
+                                            i_AccountExist += 1;
+                                        }
+                                        else if (res == 553)
+                                        {
+                                            i_553_AccountExist += 1;
+                                        }
+                                        else if (res == 3)
+                                        {
+                                            i_3_AccountExist += 1;
+                                            sb_exceptionEmailId.Append(lstEmail[ic] + ";");
+                                        }
+                                        else if (res == 0) //mail at a rate that
+                                        {
+                                            i_450_AccountExist += 1;
+                                            sb_exceptionEmailId.Append(lstEmail[ic] + ";");
+                                        }
+                                        else if (res == 1)
+                                        {
+                                            pattern_exists = "P" + ic.ToString();
+                                            str_Pdoamin = str_doamin;
+                                            i_Ppattern = i;
+                                            strmail = lstEmail[ic];
+                                            // break;
+                                        }
+                                        else
+                                        {
+                                            str_other = arr_res[1];
+                                        }
+                                    }
+                                }
+
+           
+                            }
+                                Rows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')",
+                                MySqlHelper.EscapeString(Email_Pattern_EmailId_Uid),
+                                MySqlHelper.EscapeString(strmail),
+                                MySqlHelper.EscapeString(pattern_exists.ToString()),
+                                MySqlHelper.EscapeString(i_AccountExist.ToString()),
+                                MySqlHelper.EscapeString(i_553_AccountExist.ToString()),
+                                MySqlHelper.EscapeString(i_3_AccountExist.ToString()),
+                                MySqlHelper.EscapeString(i_450_AccountExist.ToString()),
+                                MySqlHelper.EscapeString(str_other),
+                                MySqlHelper.EscapeString(sb_exceptionEmailId.ToString())));
+                                pattern_exists = "";
+                                strmail = "";
+                        }
+
+                        catch (Exception ex)
+                        {
+                            //Console.WriteLine(ex.ToString());
+                            //Rows.Add(string.Format("('{0}','{1}','{2}','{3}')", MySqlHelper.EscapeString(Email_Pattern_EmailId_Uid), MySqlHelper.EscapeString(strmail), MySqlHelper.EscapeString(ex.ToString()), MySqlHelper.EscapeString(pattern_exists)));
+                        }
+                    }
+
+                    if (Rows.Count > 0)
+                    {
+                        sCommand.Append(string.Join(",", Rows));
+                        sCommand.Append(";");
+                        HelperCls.ExecuteSaveQuery(sCommand.ToString());
+                        Rows.Clear();
+                    }
+                    dt.Clear();
+                }
+
+                catch (Exception ex)
+                {
+                   //Console.WriteLine(ex.ToString());
+                }
+                Console.WriteLine("Chkmail ET : {0} {1}", sthread, System.DateTime.Now);
+            }
+        }
+        public static DataTable GetRec(int p_type, int i)
+        {
+            DataTable dt = new DataTable();
+            try
+             {
+               dt = EmailPatternCls.GetRec(p_type, i);
+             }
+            catch (Exception ex)
+             {
+               Console.WriteLine(ex.ToString());
+             }
+            return dt;
+        }
+        public static string GetConnection()
+        {
+           HelperCls objEmailPatternCls = new HelperCls(ConnectionString);
+           return objEmailPatternCls.ToString();
+        }
+
+ 
+        public static string CheckDomainCheckAll(string str_doamin)
+        {
+            string str_chkall = "";
+            //int res_chkall = 0;
+            string res_chkall = "";
+            str_chkall = string.Concat(randomstring, str_doamin);
+            res_chkall = EmailPatternCls.Chkmail(str_chkall);
+            //res_chkall = Chkmail(str_chkall);
+            return res_chkall;
+        }
+        public static void SaveDomainCheckAll()
+        {
+            StringBuilder Sb_IAccepAll_Command = new StringBuilder();
+            StringBuilder Sb_UPAccepAll_Command = new StringBuilder();
+            StringBuilder Sb_ExceptionAll_Command = new StringBuilder();
+            string str_tbl = "";
+            int i_upExcp_Status = 0;
+
+            Sb_IAccepAll_Command = new StringBuilder("INSERT IGNORE INTO email_pattern_chkcatchall (Domain,is_catchall,response) VALUES ");
+            Sb_UPAccepAll_Command = new StringBuilder("Update email_pattern set status = 5 where website in (");
+            try
+            {
+                if (lst_IAccepAll_Rows.Count > 0)
+                {
+                    Sb_IAccepAll_Command.Append(string.Join(",", lst_IAccepAll_Rows.Distinct()));
+                    Sb_IAccepAll_Command.Append(";");
+                    HelperCls.ExecuteSaveQuery(Sb_IAccepAll_Command.ToString());
+                    lst_IAccepAll_Rows.Clear();
+                }
+                if (lst_UPAccepAll_Rows.Count > 0)
+                {
+                    Sb_UPAccepAll_Command.Append(string.Join(",", lst_UPAccepAll_Rows.Distinct()));
+                    Sb_UPAccepAll_Command.Append(");");
+                    HelperCls.ExecuteSaveQuery(Sb_UPAccepAll_Command.ToString());
+                    lst_UPAccepAll_Rows.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public static int CheckDomainError(string strdistinc_doamin, string strdoamin)
+        {
+            string str_distinc_doamin = strdistinc_doamin;
+            string str_doamin = strdoamin;
+            string strres = "";
+            string[] arr_res = new string[2];
+            int b_chkdomain = 0;
+            //int int_chkcatch_domain = 0;
+            try
+            {
+                str_distinc_doamin = str_doamin;
+                strres = CheckDomainCheckAll(str_doamin);
+                arr_res = strres.Split(';');
+                b_chkdomain = Convert.ToInt32(arr_res[0]);
+
+                if (b_chkdomain == 1 || b_chkdomain == 2)
+                {
+                    lst_IAccepAll_Rows.Add(string.Format("('{0}','{1}','{2}')", MySqlHelper.EscapeString(str_doamin), MySqlHelper.EscapeString(b_chkdomain.ToString()), MySqlHelper.EscapeString(arr_res[1])));
+                    lst_UPAccepAll_Rows.Add(string.Format("'{0}'", MySqlHelper.EscapeString(str_doamin)));
+                }
+            }
+            catch (Exception ex)
+            {
+                b_chkdomain = 3;
+                //Console.WriteLine("Error: " + ex.ToString());
+                lst_IAccepAll_Rows.Add(string.Format("('{0}','{1}','{2}')", MySqlHelper.EscapeString(str_doamin), MySqlHelper.EscapeString("3"), MySqlHelper.EscapeString(ex.ToString())));
+                lst_UPException_Rows.Add(string.Format("'{0}'", MySqlHelper.EscapeString(str_doamin)));
+            }
+            return b_chkdomain;
+        }
+        protected static void chkmail1(string sthread, DataTable dt)
+        {
+            Thread.Sleep(1000);
+            if (i_reccheck == 1 || i_reccheck == 2)
+            {
+                chkmail_Recheck(ref sthread, ref dt);
+            }
+            else if (i_reccheck == 0)
+            {
+                //Console.WriteLine("Chkmail ST :{0} {1}", sthread, System.DateTime.Now);
+                //Thread.Sleep(100);
+                StringBuilder sCommand = new StringBuilder("INSERT INTO email_pattern_is_exists_nonavailable_pattern (U_id,Email_Id,Pattern_Exists,550_Status,553_Status,3_exception_Status,450_Status,Other_Status,Email_Pattern_Exception) VALUES ");
+                List<string> Rows = new List<string>();
+
+                string Email_Pattern_EmailId_Uid = "";
+                string strmail = "";
+                string pattern_exists = "";
+                string str_fname, str_lname = "";
+                string str_Pdoamin = "";
+                string str_doamin = "";
+                string str_distinc_doamin = "";
+                int i_Ppattern = 0;
+                int int_chkcatch_domain = 0;
+                int i_553_AccountExist = 0;
+                int i_3_AccountExist = 0;
+                int i_450_AccountExist = 0;
+                int i_AccountExist = 0;
+                string str_other = "";
+                string[] arr_res = new string[2];
+                string str_res = "";
+                StringBuilder sb_exceptionEmailId = new StringBuilder();
+
+                if (dt.Rows.Count > 0)
+                {
+                    try
+                    {
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            int i = 1;
+                            int res = 0;
+                            i_AccountExist = 0;
+                            i_553_AccountExist = 0;
+                            i_3_AccountExist = 0;
+                            i_450_AccountExist = 0;
+                            //Email_Pattern_EmailId_Uid = dr["U_id"].ToString();
+                            Email_Pattern_EmailId_Uid = "1";
+                            str_other = "";
+                            str_doamin = dr["website"].ToString();
+                            //str_fname = Regex.Replace(dr["First_Name"].ToString(), "[^a-zA-Z]", String.Empty);
+                            //str_lname = Regex.Replace(dr["Last_Name"].ToString(), "[^a-zA-Z]", String.Empty);
+                            str_fname = Regex.Replace("abc", "[^a-zA-Z]", String.Empty);
+                            str_lname = Regex.Replace("def", "[^a-zA-Z]", String.Empty);
+                            sb_exceptionEmailId.Clear();
+
+                            if (str_fname != string.Empty)
+                            {
+                                //if (i_reccheck == 0)
+                                //{
+                                //    if ((str_distinc_doamin != str_doamin) || (int_chkcatch_domain == 3)) // check catch all
+                                //    //if(str_distinc_doamin != str_doamin)
+                                //    {
+                                //        int_chkcatch_domain = 0;
+                                //        int_chkcatch_domain = CheckDomainError(str_distinc_doamin, str_doamin);
+                                //        if (int_chkcatch_domain == 3)
+                                //        {
+                                //            int_chkcatch_domain = CheckDomainError(str_distinc_doamin, str_doamin);
+                                //        }
+                                //        str_distinc_doamin = str_doamin;
+                                //    }
+                                //}
+                                //if ((int_chkcatch_domain != 3) && (int_chkcatch_domain != 1)) //
+                                // {
+                                // if (int_chkcatch_domain == 0)
+                                //if (int_chkcatch_domain != 1)
+                                // {
+                                //if (str_Pdoamin != "" && str_Pdoamin == str_doamin) // check domain priority
+                                //{
+                                //    try
+                                //    {
+                                //        strmail = CreatePattern(str_fname, str_lname, str_doamin, i_Ppattern);
+                                //        //str_res = Chkmail(strmail);
+                                //        Console.WriteLine(strmail);
+                                //        str_res = EmailPatternCls.Chkmail(strmail);
+                                //        Console.WriteLine(str_res);
+                                //        arr_res = str_res.Split(';');
+                                //        res = Convert.ToInt32(arr_res[0]);
+
+                                //        if (res == 550) //account that you tried to reach does not exist
+                                //        {
+                                //            i_AccountExist += 1;
+                                //        }
+                                //        else if (res == 553) // recipient address is not a valid
+                                //        {
+                                //            i_553_AccountExist += 1;
+                                //        }
+                                //        else if (res == 3) // Exception
+                                //        {
+                                //            i_3_AccountExist += 1;
+                                //            sb_exceptionEmailId.Append(strmail);
+                                //        }
+                                //        else if (res == 0) //mail at a rate that
+                                //        {
+                                //            i_450_AccountExist += 1;
+                                //            sb_exceptionEmailId.Append(strmail);
+                                //        }
+                                //        else if (res == 1) //OK
+                                //        {
+                                //            pattern_exists = res == 1 ? "P" + i_Ppattern.ToString() : "";
+                                //        }
+                                //        else
+                                //        {
+                                //            str_other = arr_res[1];
+                                //        }
+                                //    }
+                                //    catch (Exception ex)
+                                //    {
+                                //        //Console.WriteLine(ex.ToString());
+                                //    }
+                                //}
+                                // while (res != 1 && i < 19)
+                                while (i < 2)
+                                {
+                                    try
+                                    {
+                                        if (i != i_Ppattern)
+                                        {
+                                            strmail = EmailPatternCls.CreatePattern(str_fname, str_lname, str_doamin, i);
+                                            if (strmail != "")
+                                            {
+                                                //res = EmailPatternCls.Chkmail(strmail);
+                                                //res = Chkmail(strmail);
+                                                str_res = EmailPatternCls.Chkmail(strmail);
+                                                Console.WriteLine(strmail + " " + str_res);
+                                                arr_res = str_res.Split(';');
+                                                res = Convert.ToInt32(arr_res[0]);
+                                                if (res == 550)
+                                                {
+                                                    i_AccountExist += 1;
+                                                }
+                                                else if (res == 553)
+                                                {
+                                                    i_553_AccountExist += 1;
+                                                }
+                                                else if (res == 3)
+                                                {
+                                                    i_3_AccountExist += 1;
+                                                    sb_exceptionEmailId.Append(strmail + ";");
+                                                }
+                                                else if (res == 0) //mail at a rate that
+                                                {
+                                                    i_450_AccountExist += 1;
+                                                    sb_exceptionEmailId.Append(strmail + ";");
+                                                }
+                                                else if (res == 1)
+                                                {
+                                                    pattern_exists = "P" + i.ToString();
+                                                    str_Pdoamin = str_doamin;
+                                                    i_Ppattern = i;
+                                                }
+                                                else
+                                                {
+                                                    str_other = arr_res[1];
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(strmail + " " + ex.ToString());
+                                        //Rows.Add(string.Format("('{0}','{1}','{2}','{3}')", MySqlHelper.EscapeString(Email_Pattern_EmailId_Uid), MySqlHelper.EscapeString(strmail), MySqlHelper.EscapeString(ex.ToString()), MySqlHelper.EscapeString(pattern_exists)));
+                                    }
+                                    i++;
+                                    strmail = res == 1 ? strmail : "";
+                                }
+                                Rows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')",
+                                    MySqlHelper.EscapeString(Email_Pattern_EmailId_Uid),
+                                    MySqlHelper.EscapeString(strmail),
+                                    MySqlHelper.EscapeString(pattern_exists.ToString()),
+                                    MySqlHelper.EscapeString(i_AccountExist.ToString()),
+                                    MySqlHelper.EscapeString(i_553_AccountExist.ToString()),
+                                    MySqlHelper.EscapeString(i_3_AccountExist.ToString()),
+                                    MySqlHelper.EscapeString(i_450_AccountExist.ToString()),
+                                    MySqlHelper.EscapeString(str_other),
+                                    MySqlHelper.EscapeString(sb_exceptionEmailId.ToString())));
+                                pattern_exists = "";
+                                strmail = "";
+                            }
+                        }
+                        //  }
+                        if (Rows.Count > 0)
+                        {
+                            sCommand.Append(string.Join(",", Rows));
+                            sCommand.Append(";");
+                            HelperCls.ExecuteSaveQuery(sCommand.ToString());
+                            Rows.Clear();
+                        }
+                        dt.Clear();
+                    }
+
+                    catch (Exception ex)
+                    {
+                       //Console.WriteLine(ex.ToString());
+                    }
+                    Console.WriteLine("Chkmail ET : {0} {1}", sthread, System.DateTime.Now);
+                }
+            }
+        }
+    }
+}
+
+
